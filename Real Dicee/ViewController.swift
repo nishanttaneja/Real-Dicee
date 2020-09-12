@@ -11,65 +11,61 @@ import SceneKit
 import ARKit
 
 class ViewController: UIViewController, ARSCNViewDelegate {
-
+    //MARK:- IBOutlet
     @IBOutlet var sceneView: ARSCNView!
     
+    //MARK:- Override View Lifecycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Set the view's delegate
+        // SceneView Delegate|Options
         sceneView.delegate = self
-        
-        // Show statistics such as fps and timing information
-        sceneView.showsStatistics = true
-        
-        // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
-        
-        // Set the scene to the view
-        sceneView.scene = scene
+        sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
+        sceneView.autoenablesDefaultLighting = true
     }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         // Create a session configuration
         let configuration = ARWorldTrackingConfiguration()
-
         // Run the view's session
         sceneView.session.run(configuration)
     }
-    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
         // Pause the view's session
         sceneView.session.pause()
     }
-
-    // MARK: - ARSCNViewDelegate
     
-/*
-    // Override to create and configure nodes for anchors added to the view's session.
-    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-        let node = SCNNode()
-     
-        return node
+    //MARK:- Touch Detection Methods
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let touch = touches.first {
+            let touchLocation = touch.location(in: sceneView)
+            if let hitResult = sceneView.hitTest(touchLocation, types: .existingPlaneUsingExtent).first {
+                // Create diceScene
+                guard let diceScene = SCNScene(named: "art.scnassets/diceCollada.scn") else {fatalError("error loading diceCollada.scn")}
+                if let diceNode = diceScene.rootNode.childNode(withName: "Dice", recursively: true) {
+                    // Adding dice in RealWorld
+                    let worldCoordinates = hitResult.worldTransform.columns.3
+                    diceNode.position = SCNVector3(worldCoordinates.x, worldCoordinates.y + diceNode.boundingSphere.radius, worldCoordinates.z)
+                    sceneView.scene.rootNode.addChildNode(diceNode)
+                    // Rolling dice
+                    let randomX = CGFloat(arc4random_uniform(4) + 1) * .pi/2
+                    let randomZ = CGFloat(arc4random_uniform(4) + 1) * .pi/2
+                    diceNode.runAction(SCNAction.rotateBy(x: randomX, y: 0, z: randomZ*5, duration: 0.5))
+                }
+            }
+        }
     }
-*/
     
-    func session(_ session: ARSession, didFailWithError error: Error) {
-        // Present an error message to the user
-        
-    }
-    
-    func sessionWasInterrupted(_ session: ARSession) {
-        // Inform the user that the session has been interrupted, for example, by presenting an overlay
-        
-    }
-    
-    func sessionInterruptionEnded(_ session: ARSession) {
-        // Reset tracking and/or remove existing anchors if consistent tracking is required
-        
+    //MARK:- ARSCNViewDelegate
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        // Display Plane in Real World
+        if anchor is ARPlaneAnchor {
+            print("plane detected")
+            let anchorDimensions = (anchor as! ARPlaneAnchor).extent
+            let plane = SCNPlane(width: CGFloat(anchorDimensions.x), height: CGFloat(anchorDimensions.z))
+            let gridMaterial = SCNMaterial()
+            gridMaterial.diffuse.contents = 
+            
+        }
     }
 }
