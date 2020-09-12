@@ -26,6 +26,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         super.viewWillAppear(animated)
         // Create a session configuration
         let configuration = ARWorldTrackingConfiguration()
+        configuration.planeDetection = .horizontal
         // Run the view's session
         sceneView.session.run(configuration)
     }
@@ -59,13 +60,20 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     //MARK:- ARSCNViewDelegate
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         // Display Plane in Real World
-        if anchor is ARPlaneAnchor {
-            print("plane detected")
-            let anchorDimensions = (anchor as! ARPlaneAnchor).extent
-            let plane = SCNPlane(width: CGFloat(anchorDimensions.x), height: CGFloat(anchorDimensions.z))
-            let gridMaterial = SCNMaterial()
-            gridMaterial.diffuse.contents = 
-            
-        }
+        guard let planeAnchor = anchor as? ARPlaneAnchor else {return}
+        // Create Geometry
+        let anchorDimensions = planeAnchor.extent
+        let plane = SCNPlane(width: CGFloat(anchorDimensions.x), height: CGFloat(anchorDimensions.z))
+        // Add Materials
+        let gridMaterial = SCNMaterial()
+        gridMaterial.diffuse.contents = UIImage(named: "art.scnassets/grid.png")
+        plane.materials = [gridMaterial]
+        // Create Node
+        let anchorPosition = planeAnchor.center
+        let planeNode = SCNNode()
+        planeNode.geometry = plane
+        planeNode.position = SCNVector3(anchorPosition.x, 0, anchorPosition.z)
+        planeNode.transform = SCNMatrix4MakeRotation(-.pi/2, 1, 0, 0)
+        node.addChildNode(planeNode)
     }
 }
