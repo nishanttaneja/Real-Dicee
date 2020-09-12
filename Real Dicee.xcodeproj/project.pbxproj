@@ -16,6 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B408FFCD250CBBF700F8CF64 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B4BF37EF250B9AA7006E00D0 /* Real Dicee.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Real Dicee.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4BF37F2250B9AA7006E00D0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B4BF37F4250B9AA7006E00D0 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
@@ -40,6 +41,7 @@
 		B4BF37E6250B9AA7006E00D0 = {
 			isa = PBXGroup;
 			children = (
+				B408FFCD250CBBF700F8CF64 /* README.md */,
 				B4BF37F1250B9AA7006E00D0 /* Real Dicee */,
 				B4BF37F0250B9AA7006E00D0 /* Products */,
 			);
